@@ -83,15 +83,3 @@ This EDA-based analysis helped uncover high-risk customer segments, enabling ban
 - Cluster customers based on risk profiles
 
 ---
-
-## 🙋‍♂️ Author
-
-**B Devendranadh Venkat**  
-Student | Data Science Enthusiast  
-Course: Data Science Toolbox with Python (INT375)
-
----
-
-## 📄 License
-
-This project is open-source and free to use under the MIT License.
