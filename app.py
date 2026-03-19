@@ -1,4 +1,65 @@
 import streamlit as st
+import pandas as pd
+import plotly.express as px
 
-st.title("Customer Churn Dashboard 🚀")
-st.write("Dashboard is working!")
+# Load dataset
+df = pd.read_csv("C:/Users/mishr/Desktop/CODE/Data Analysis/Customer-Churn-Analysis/Bank_Churn.csv")
+
+# Preprocessing
+df['Gender'] = df['Gender'].map({'Male': 0, 'Female': 1})
+df = pd.get_dummies(df, columns=['Geography'], drop_first=True)
+df['AgeGroup'] = pd.cut(df['Age'], bins=[18,30,45,60,100], labels=['18-30','31-45','46-60','60+'])
+
+# Sidebar filters
+st.sidebar.header("Filters")
+gender_filter = st.sidebar.selectbox("Select Gender", options=[None, "Male", "Female"])
+age_filter = st.sidebar.multiselect("Select Age Group", options=df['AgeGroup'].unique())
+active_filter = st.sidebar.selectbox("Active Member", options=[None, 0, 1])
+
+# Apply filters
+filtered_df = df.copy()
+if gender_filter:
+    filtered_df = filtered_df[filtered_df['Gender'] == (0 if gender_filter=="Male" else 1)]
+if age_filter:
+    filtered_df = filtered_df[filtered_df['AgeGroup'].isin(age_filter)]
+if active_filter is not None:
+    filtered_df = filtered_df[filtered_df['IsActiveMember'] == active_filter]
+
+st.title("📊 Bank Customer Churn Dashboard")
+
+# Churn distribution
+fig_churn = px.histogram(filtered_df, x="Exited", color="Exited",
+                         title="Customer Churn Distribution",
+                         labels={"Exited":"Churn (0=Stayed, 1=Churned)"})
+st.plotly_chart(fig_churn)
+
+# Pie chart
+fig_pie = px.pie(filtered_df, names="Exited", title="Churn Percentage",
+                 color="Exited", color_discrete_map={0:"orange",1:"#66b3ff"})
+st.plotly_chart(fig_pie)
+
+# Churn by Age Group
+fig_age = px.histogram(filtered_df, x="AgeGroup", color="Exited", barmode="group",
+                       title="Churn by Age Group")
+st.plotly_chart(fig_age)
+
+# Tenure vs Churn
+fig_tenure = px.box(filtered_df, x="Exited", y="Tenure", title="Tenure vs Churn")
+st.plotly_chart(fig_tenure)
+
+# Products vs Churn
+fig_products = px.histogram(filtered_df, x="NumOfProducts", color="Exited", barmode="group",
+                            title="Products vs Churn")
+st.plotly_chart(fig_products)
+
+# Financial factors
+fig_balance = px.box(filtered_df, x="Exited", y="Balance", title="Balance vs Churn")
+st.plotly_chart(fig_balance)
+
+fig_salary = px.box(filtered_df, x="Exited", y="EstimatedSalary", title="Salary vs Churn")
+st.plotly_chart(fig_salary)
+
+# Correlation heatmap
+corr = filtered_df[['CreditScore','Age','Tenure','Balance','EstimatedSalary','Exited']].corr()
+fig_corr = px.imshow(corr, text_auto=True, color_continuous_scale="YlGnBu", title="Correlation Heatmap")
+st.plotly_chart(fig_corr)
