@@ -80,6 +80,6 @@ This EDA-based analysis helped uncover high-risk customer segments, enabling ban
 
 - Implement Machine Learning models for churn prediction
 - Add customer feedback or transaction patterns
-- Cluster customers based on risk profiles
+- Cluster customers based on risk profiles  
 
 ---
