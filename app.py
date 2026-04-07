@@ -41,6 +41,7 @@ fig_churn = px.histogram(
 # Add count labels on top of bars
 fig_churn.update_traces(texttemplate='%{y}', textposition='outside')
 st.plotly_chart(fig_churn)
+
 # Pie chart
 fig_pie = px.pie(
     filtered_df,
